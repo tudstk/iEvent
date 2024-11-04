@@ -38,7 +38,7 @@ namespace IEvent.API.Controllers
     }
 
     [HttpPost]
-    public IActionResult Post(UserModel model)
+    public async Task<IActionResult> Post(UserModel model)
     {
       var userDto = new UserDto
       {
@@ -46,7 +46,7 @@ namespace IEvent.API.Controllers
         Description = model.Description,
       };
 
-      userService.AddUserAsync(userDto);
+      await userService.AddUserAsync(userDto);
 
       return StatusCode(201);
     }
