@@ -1,0 +1,13 @@
+Lab 3
+
+Tudor Stroescu:
+C1 & C2 Diagrams
+
+Andrei Apricopoai:
+C3 & C4 Diagrams
+
+Andrei Socoteala:
+Use-case
+
+Ana Manoliu & Alex Calcan:
+Sequence + flow
