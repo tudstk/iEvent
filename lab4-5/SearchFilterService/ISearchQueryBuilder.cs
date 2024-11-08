@@ -4,9 +4,9 @@ namespace SearchFilterService
     //Builder
     public interface ISearchQueryBuilder
     {
-        void SetDate(string date);
-        void SetLocation(string location);
-        void SetArtist(string artist);
+        ISearchQueryBuilder SetDate(string date);
+        ISearchQueryBuilder SetLocation(string location);
+        ISearchQueryBuilder SetArtist(string artist);
         SearchQuery Build();
     }
 }
