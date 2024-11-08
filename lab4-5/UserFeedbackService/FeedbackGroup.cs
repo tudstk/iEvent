@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace UserFeedbackService
 {
+    //Composite
     public class FeedbackGroup : FeedbackComponent
     {
         private readonly List<FeedbackComponent> _feedbackComponents = new List<FeedbackComponent>();
