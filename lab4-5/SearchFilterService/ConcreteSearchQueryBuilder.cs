@@ -5,19 +5,23 @@ namespace SearchFilterService
     {
         private readonly SearchQuery _searchQuery = new SearchQuery();
 
-        public void SetDate(string date)
+    
+        public ConcreteSearchQueryBuilder SetDate(string date)
         {
             _searchQuery.Date = date;
+            return this
         }
 
-        public void SetLocation(string location)
+        public ConcreteSearchQueryBuilder SetLocation(string location)
         {
             _searchQuery.Location = location;
+            return this;
         }
 
-        public void SetArtist(string artist)
+        public ConcreteSearchQueryBuilder SetArtist(string artist)
         {
             _searchQuery.Artist = artist;
+            return this;
         }
 
         public SearchQuery Build()
