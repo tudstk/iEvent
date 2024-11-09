@@ -15,7 +15,6 @@ namespace IEvent.Services.Infrastructure
       //Add other dependency injection services
       serviceCollection.AddScoped<IUserService, UserService>();
 
-
       return serviceCollection;
     }
   }

@@ -8,7 +8,7 @@ namespace IEvent.Data.Infrastructure
   {
     public static IServiceCollection InitializeIEventDatabaseContext(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
-      var connectionString = configuration.GetConnectionString("DefaultConnection");
+      var connectionString = configuration.GetValue<string>("DatabaseConnectionString");
 
       if (string.IsNullOrWhiteSpace(connectionString))
       {
