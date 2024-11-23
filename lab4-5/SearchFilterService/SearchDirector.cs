@@ -9,6 +9,7 @@ namespace SearchFilterService
             _builder = builder;
         }
 
+        [ExecutionTimeAspect]
         public SearchQuery ConstructSearchQuery(string date, string location, string artist)
         {
             _builder.SetDate(date);
