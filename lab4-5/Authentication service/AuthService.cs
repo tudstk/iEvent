@@ -12,16 +12,18 @@ namespace AuthenticationService
             _sessionManager = sessionManager;
         }
 
+        [AuthenticationAspect]
         public bool AuthenticateWithEmailAndPassword(string email, string password)
         {
             throw new NotImplementedException();
         }
-
+        
+        [AuthenticationAspect]
         public bool AuthenticateWithOAuth(string provider, string accessToken)
         {
             throw new NotImplementedException();
         }
-
+        [AuthenticationAspect]
         public void Logout(User user)
         {
             throw new NotImplementedException();
