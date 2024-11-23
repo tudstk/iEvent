@@ -11,6 +11,7 @@ namespace EventRecommendationService
             _recommendationEngine = recommendationEngine;
         }
 
+        [StrategyAspect]
         public void SetRecommendationEngine(IRecommendationEngine recommendationEngine)
         {
             _recommendationEngine = recommendationEngine;
