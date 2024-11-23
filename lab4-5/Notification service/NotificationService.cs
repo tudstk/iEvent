@@ -21,7 +21,8 @@ namespace NotificationService
                 observer.Update(notification);
             }
         }
-
+        
+        [NotificationAspect]
         public void SendNotification(string type, string message, string destination)
         {
             var notification = new Notification(type, message, destination);
