@@ -12,6 +12,7 @@ public class ModerationService
         _handlerChain = profanityCheckHandler;
     }
 
+    [ModerationAspect]
     public bool ModerateContent(Content content)
     {
         try
