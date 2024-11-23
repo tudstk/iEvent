@@ -9,6 +9,7 @@ namespace DatabaseService
             _databasePool = databasePool;
         }
 
+        [PerformanceMonitoringAspect]
         public void PerformDatabaseOperation(string command)
         {
             var connection = _databasePool.AcquireConnection();
