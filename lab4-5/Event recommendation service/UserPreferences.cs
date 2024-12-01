@@ -20,34 +20,38 @@ namespace EventRecommendationService
         }
 
         public object Clone()
+    {
+        return new UserPreferences
         {
-            return new UserPreferences
+            FavoriteGenres = new List<string>(this.FavoriteGenres),
+            FavoriteArtists = new List<string>(this.FavoriteArtists),
+            PreferredLocations = new List<string>(this.PreferredLocations),
+            EventHistory = new List<UserEventHistory>(this.EventHistory.Select(eh => new UserEventHistory
             {
-                FavoriteGenres = new List<string>(this.FavoriteGenres),
-                FavoriteArtists = new List<string>(this.FavoriteArtists),
-                PreferredLocations = new List<string>(this.PreferredLocations),
-                EventHistory = new List<UserEventHistory>(this.EventHistory)
-            };
+                Events = eh.Events.Select(e => new UserEvent
+                {
+                    Event = e.Event,
+                    IsPreferred = e.IsPreferred
+                }).ToList()
+            }).ToList())
+        };
+    }
+        
+    }
+        public class UserEventHistory
+        {
+            public List<UserEvent> Events { get; set; }
+
+            public UserEventHistory()
+            {
+                Events = new List<UserEvent>();
+            }
         }
 
-        public void AddEventToHistory(string eventName, string genre, string location, DateTime eventDate, bool isPreferred)
+        public class UserEvent
         {
-            EventHistory.Add(new UserEventHistory
-            {
-                EventName = eventName,
-                Genre = genre,
-                Location = location,
-                EventDate = eventDate,
-                IsPreferred = isPreferred
-            });
+            public Event Event { get; set; }
+            public bool IsPreferred { get; set; }
         }
-    }
-    public class UserEventHistory
-    {
-        public string EventName { get; set; }
-        public string Genre { get; set; }
-        public string Location { get; set; }
-        public DateTime EventDate { get; set; }
-        public bool IsPreferred { get; set; }  
-    }
+
 }

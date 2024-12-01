@@ -20,29 +20,32 @@ namespace EventRecommendationService
         }
 
         private void TrainModel()
-        {   
+        {
             if (userPreferences == null)
                 throw new ArgumentNullException(nameof(userPreferences), "Preferences cannot be null.");
 
             var trainingData = new List<EventTrainingData>();
 
-            foreach (var eventHistory in userPreferences.EventHistory)
-            {
-                trainingData.Add(new EventTrainingData
+                foreach (var userEvent in userPreferences.EventHistory)
                 {
-                    Genre = eventHistory.Genre,
-                    Location = eventHistory.Location,
-                    IsPreferred = eventHistory.IsPreferred
-                });
-            }
+                    foreach(var evt in userEvent.Events)
+                        trainingData.Add(new EventTrainingData
+                        {
+                            Genre = evt.Event.Genre,
+                            Location = evt.Event.Location,
+                            Type = evt.Event.Type,
+                            IsPreferred = evt.IsPreferred
+                        });
+                }
+            
 
             var trainDataView = _mlContext.Data.LoadFromEnumerable(trainingData);
-            
+
             var pipeline = _mlContext.Transforms.Text.FeaturizeText("GenreFeatures", nameof(EventTrainingData.Genre))
                             .Append(_mlContext.Transforms.Text.FeaturizeText("LocationFeatures", nameof(EventTrainingData.Location)))
                             .Append(_mlContext.Transforms.Concatenate("Features", "GenreFeatures", "LocationFeatures"))
                             .Append(_mlContext.BinaryClassification.Trainers.SdcaLogisticRegression(
-                            labelColumnName: nameof(EventTrainingData.IsPreferred), 
+                            labelColumnName: nameof(EventTrainingData.IsPreferred),
                             featureColumnName: "Features"));
 
             _model = pipeline.Fit(trainDataView);
@@ -55,10 +58,12 @@ namespace EventRecommendationService
 
             var availableEvents = new List<Event>
             {
-                new ConcertEvent { Name = "Rock Fest", Genre = "Rock", Date = DateTime.Now.AddDays(10), Location = "New York", MainArtist = "Band A" },
-                new ConcertEvent { Name = "Pop Gala", Genre = "Pop", Date = DateTime.Now.AddDays(15), Location = "Los Angeles", MainArtist = "Artist B" },
-                new ExhibitionEvent { Name = "Art Expo", Genre = "Art", Date = DateTime.Now.AddDays(5), Location = "Paris", Theme = "Modern Art" },
-                new ConcertEvent { Name = "Jazz Night", Genre = "Jazz", Date = DateTime.Now.AddDays(20), Location = "Chicago", MainArtist = "Artist C" }
+                new Event {Name = "Adele Live", Date = DateTime.Now, Location = "London", Genre = "Pop", Type = "Concert", MainArtist = "Adele", Description = "Adele's live concert in London", Image = "adele.jpg"},
+                new Event {Name = "Rock in Rio", Date = DateTime.Now, Location = "Rio de Janeiro", Genre = "Rock", Type = "Festival", MainArtist = "Foo Fighters", Description = "Rock in Rio festival in Rio de Janeiro", Image = "rockinrio.jpg"},
+                new Event {Name = "Tomorrowland", Date = DateTime.Now, Location = "Boom", Genre = "Electronic", Type = "Festival", MainArtist = "David Guetta", Description = "Tomorrowland festival in Boom", Image = "tomorrowland.jpg"},
+                new Event {Name = "Theatre Play", Date = DateTime.Now, Location = "New York", Genre = "Drama", Type = "Theatre", Theme = "Drama", Description = "Theatre play in New York", Image = "theatre.jpg"},
+                new Event {Name = "Art Exhibition", Date = DateTime.Now, Location = "Paris", Genre = "Art", Type = "Exhibition", Theme = "Art", Description = "Art exhibition in Paris", Image = "art.jpg"},
+                new Event {Name = "Jazz Night", Date = DateTime.Now, Location = "New Orleans", Genre = "Jazz", Type = "Concert", MainArtist = "Louis Armstrong", Description = "Jazz night in New Orleans", Image = "jazz.jpg"}
             };
 
             var eventData = availableEvents.Select(evt => new EventInputData
@@ -76,7 +81,7 @@ namespace EventRecommendationService
 
             for (int i = 0; i < availableEvents.Count; i++)
             {
-                if (scoredResults[i].Score > 0.5) 
+                if (scoredResults[i].Score > 0.5)
                 {
                     if (preferences.PreferredLocations != null && preferences.PreferredLocations.Contains(availableEvents[i].Location, StringComparer.OrdinalIgnoreCase))
                     {
@@ -93,6 +98,7 @@ namespace EventRecommendationService
     {
         public string Genre { get; set; }
         public string Location { get; set; }
+        public string Type { get; set; }
         public bool IsPreferred { get; set; }
     }
 
