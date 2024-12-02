@@ -1,15 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import './output.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import AuthInput from './auth/AuthInput';
+import Panel from './user/Panel';
+import { dummyUser, dummyEvents } from './models/dummy';
+import EventPage from './event/EventPage';
+import Home from './home/Home';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    {/* <App /> */}
+    {/* <AuthInput /> */}
+    {/* <Panel user={dummyUser} /> */}
+    {/* <EventPage
+      event={dummyEvents[0]}
+      user={dummyUser}
+    /> */}
+    <Home />
   </React.StrictMode>
 );
 
