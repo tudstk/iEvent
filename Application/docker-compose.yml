@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:80" # Map port 80 in the container to 3000 on the host
+    depends_on:
+      - backend
+    env_file:
+      - ./.dev.env
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "5000:5000" # Map port 5000 in the container to 5000 on the host
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - database
+    env_file:
+      - ./.dev.env
+
+  database:
+    build:
+      context: ./db
+    ports:
+      - "1433:1433"
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 4G
+    volumes:
+      - ./data:/var/opt/mssql
+    env_file:
+      - ./.dev.env

@@ -1,0 +1,1 @@
+docker compose --compatibility up --force-recreate --remove-orphans --build
