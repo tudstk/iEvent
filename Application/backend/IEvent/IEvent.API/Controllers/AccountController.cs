@@ -5,14 +5,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
 namespace IEvent.API.Controllers
 {
-  [Route("api/[controller]")]
+  [Route("api/account")]
   [ApiController]
   public class AccountController : ControllerBase
   {
@@ -66,7 +65,26 @@ namespace IEvent.API.Controllers
       if (result.Succeeded)
       {
         await _userManager.AddToRoleAsync(user, AuthRoles.User);
-        return Ok(new { message = "User registered successfully" });
+
+        var authClaims = new List<Claim>
+        {
+          new Claim(JwtRegisteredClaimNames.Sub, user.UserName!),
+          new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+          new Claim("userId", user.Id.ToString()),
+          new Claim("email", user.Email!),
+          new Claim("isAdmin", "false"),
+          new Claim("isOrganizer", "false"),
+          new Claim("isUser", "true")
+        };
+
+        var token = new JwtSecurityToken(
+            issuer: _configuration["Issuer"],
+            expires: DateTime.Now.AddMinutes(double.Parse(_configuration["ExpiryMinues"]!)),
+            claims: authClaims,
+            signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["SecretKey"]!)),
+            SecurityAlgorithms.HmacSha256));
+
+        return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
       }
 
       return BadRequest(result.Errors);
@@ -85,15 +103,20 @@ namespace IEvent.API.Controllers
       {
         var userRoles = await _userManager.GetRolesAsync(user);
 
+        var isAdmin = userRoles.Any(x => x.Equals("Admin")) ? "true" : "false";
+        var isOrganizer = userRoles.Any(x => x.Equals("Organizer")) ? "true" : "false";
+        var isUser = userRoles.Any(x => x.Equals("User")) ? "true" : "false";
+
         var authClaims = new List<Claim>
         {
           new Claim(JwtRegisteredClaimNames.Sub, user.UserName!),
           new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
           new Claim("userId", user.Id.ToString()),
           new Claim("email", user.Email!),
+          new Claim("isAdmin", isAdmin),
+          new Claim("isOrganizer", isOrganizer),
+          new Claim("isUser", isUser)
         };
-
-        authClaims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var token = new JwtSecurityToken(
             issuer: _configuration["Issuer"],
@@ -187,6 +210,13 @@ namespace IEvent.API.Controllers
       }
 
       return BadRequest(result.Errors);
+    }
+
+    [Authorize]
+    [HttpGet("check-token")]
+    public IActionResult CheckToken()
+    {
+      return Ok("Token is valid");
     }
   }
 }

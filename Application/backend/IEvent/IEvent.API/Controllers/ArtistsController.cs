@@ -1,4 +1,4 @@
-using IEvent.API.Models.UserModels;
+﻿using IEvent.API.Models.UserModels;
 using IEvent.Services.UserServices;
 using IEvent.Services.UserServices.Dto;
 using Microsoft.AspNetCore.Mvc;
@@ -7,16 +7,17 @@ using System.Threading.Tasks;
 namespace IEvent.API.Controllers
 {
   [ApiController]
-  [Route("api/users")]
-  public class UsersController : ControllerBase
+  [Route("api/artists")]
+  public class ArtistsController : ControllerBase
   {
     private readonly IUserService _userService;
 
-    public UsersController(IUserService userService)
+    public ArtistsController(IUserService userService)
     {
       _userService = userService;
     }
 
+    {}
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
