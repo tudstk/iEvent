@@ -1,96 +1,144 @@
-//using IEvent.API.Models.UserModels;
-//using IEvent.Services.UserServices;
-//using IEvent.Services.UserServices.Dto;
-//using Microsoft.AspNetCore.Mvc;
-//using System.Threading.Tasks;
+using IEvent.Services.UserServices;
+using IEvent.Services.UserServices.Dto;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-//namespace IEvent.API.Controllers
-//{
-//  [ApiController]
-//  [Route("api/users")]
-//  public class UsersController : ControllerBase
-//  {
-//    private readonly IUserService _userService;
+namespace IEvent.API.Controllers
+{
+  [ApiController]
+  [Route("api/users")]
+  public class UsersController : ControllerBase
+  {
+    private readonly IUserService userService;
 
-//    public UsersController(IUserService userService)
-//    {
-//      _userService = userService;
-//    }
+    public UsersController(IUserService userService)
+    {
+      this.userService = userService;
+    }
 
-//    [HttpGet]
-//    public async Task<IActionResult> GetAll()
-//    {
-//      var users = await _userService.GetAllUsersAsync();
-//      return Ok(users);
-//    }
+    [Authorize]
+    [HttpPost("/event")]
+    public async Task<IActionResult> AddEventForUser([FromBody] int eventId)
+    {
+      try
+      {
+        var userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value);
 
-//    [HttpGet("{id}", Name = "GetUserById")]
-//    public async Task<IActionResult> GetById(int id)
-//    {
-//      var user = await _userService.GetUserByIdAsync(id);
-//      if (user == null)
-//      {
-//        return NotFound();
-//      }
+        await userService.AddEventForUser(userId, eventId);
 
-//      return Ok(user);
-//    }
+        return Ok();
+        
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(500);
+      }
+    }
 
-//    // POST: api/Users
-//    [HttpPost]
-//    public async Task<IActionResult> Create(UserModel model)
-//    {
-//      if (!ModelState.IsValid)
-//      {
-//        return BadRequest(ModelState);
-//      }
+    [Authorize]
+    [HttpGet("/profile")]
+    public async Task<IActionResult> GetProfileAsync()
+    {
+      try
+      {
+        var userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value);
 
-//      var userDto = new UserDto
-//      {
-//        Name = model.Name,
-//        Description = model.Description
-//      };
+        var profile = await userService.GetProfileAsync(userId);
 
-//      var createdUserId = await _userService.AddUserAsync(userDto);
+        if (profile == null)
+        {
+          return NotFound();
+        }
 
-//      return CreatedAtRoute("GetUserById", new { id = createdUserId }, userDto);
-//    }
+        return Ok(profile);
 
-//    [HttpPut("{id}")]
-//    public async Task<IActionResult> Update(int id, UserModel model)
-//    {
-//      if (!ModelState.IsValid)
-//      {
-//        return BadRequest(ModelState);
-//      }
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(500);
+      }
+    }
 
-//      var userDto = new UserDto
-//      {
-//        Name = model.Name,
-//        Description = model.Description
-//      };
+    [Authorize]
+    [HttpGet("/recommendations")]
+    public async Task<IActionResult> GetRecommendedUserEvents()
+    {
+      try
+      {
+        var userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value);
 
-//      var updated = await _userService.UpdateUserAsync(id, userDto);
+        var recommendations = await userService.GetRecommendedUserEvents(userId);
 
-//      if (!updated)
-//      {
-//        return NotFound();
-//      }
+        return Ok(recommendations);
 
-//      return NoContent();
-//    }
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(500);
+      }
+    }
 
-//    [HttpDelete("{id}")]
-//    public async Task<IActionResult> Delete(int id)
-//    {
-//      var deleted = await _userService.DeleteUserAsync(id);
+    [Authorize]
+    [HttpGet("/all-user-events")]
+    public async Task<IActionResult> GetUserEvents()
+    {
+      try
+      {
+        var userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value);
 
-//      if (!deleted)
-//      {
-//        return NotFound();
-//      }
+        var events = await userService.GetUserEvents(userId);
 
-//      return NoContent();
-//    }
-//  }
-//}
+        return Ok(events);
+
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(500);
+      }
+    }
+
+    [Authorize]
+    [HttpDelete("/event")]
+    public async Task<IActionResult> RemoveEventForUser([FromBody] int eventId)
+    {
+      try
+      {
+        var userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value);
+
+        await userService.RemoveEventForUser(userId, eventId);
+
+        return Ok();
+
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(500);
+      }
+    }
+
+    [Authorize]
+    [HttpPut("/profile")]
+    public async Task<IActionResult> UpdateProfileAsync([FromBody] ModifyProfileDto modifyProfileDto)
+    {
+
+      if (modifyProfileDto == null)
+      {
+        return BadRequest();
+      }
+
+      try
+      {
+        var userId = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value);
+
+        await userService.UpdateProfileAsync(userId, modifyProfileDto);
+
+        return Ok();
+
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(500);
+      }
+    }
+  }
+}

@@ -16,10 +16,4 @@
     <ProjectReference Include="..\IEvent.Shared\IEvent.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="EventTypeServices\Dto\" />
-    <Folder Include="GenreServices\Dto\" />
-    <Folder Include="LocationServices\Dto\" />
-  </ItemGroup>
-
 </Project>
