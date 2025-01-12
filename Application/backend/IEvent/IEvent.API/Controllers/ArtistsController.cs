@@ -1,8 +1,8 @@
-﻿using IEvent.API.Models.UserModels;
-using IEvent.Services.UserServices;
-using IEvent.Services.UserServices.Dto;
+﻿using IEvent.Services.ArtistServices;
+using IEvent.Services.ArtistServices.Dto;
+using IEvent.Shared.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace IEvent.API.Controllers
 {
@@ -10,88 +10,100 @@ namespace IEvent.API.Controllers
   [Route("api/artists")]
   public class ArtistsController : ControllerBase
   {
-    private readonly IUserService _userService;
+    private readonly IArtistService artistService;
 
-    public ArtistsController(IUserService userService)
+    public ArtistsController(IArtistService artistService)
     {
-      _userService = userService;
+      artistService = artistService;
     }
 
-    {}
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-      var users = await _userService.GetAllUsersAsync();
-      return Ok(users);
-    }
-
-    [HttpGet("{id}", Name = "GetUserById")]
-    public async Task<IActionResult> GetById(int id)
-    {
-      var user = await _userService.GetUserByIdAsync(id);
-      if (user == null)
+    
+  [HttpGet]
+  public async Task<IActionResult> GetAll()
+  {
+      try
       {
-        return NotFound();
+        var allArtists = await artistService.GetAllArtistAsync();
+        return Ok(allArtists);
       }
-
-      return Ok(user);
-    }
-
-    // POST: api/Users
-    [HttpPost]
-    public async Task<IActionResult> Create(UserModel model)
-    {
-      if (!ModelState.IsValid)
+      catch (Exception ex) 
       {
-        return BadRequest(ModelState);
+        return StatusCode(500);
       }
-
-      var userDto = new UserDto
-      {
-        Name = model.Name,
-        Description = model.Description
-      };
-
-      var createdUserId = await _userService.AddUserAsync(userDto);
-
-      return CreatedAtRoute("GetUserById", new { id = createdUserId }, userDto);
-    }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, UserModel model)
-    {
-      if (!ModelState.IsValid)
-      {
-        return BadRequest(ModelState);
-      }
-
-      var userDto = new UserDto
-      {
-        Name = model.Name,
-        Description = model.Description
-      };
-
-      var updated = await _userService.UpdateUserAsync(id, userDto);
-
-      if (!updated)
-      {
-        return NotFound();
-      }
-
-      return NoContent();
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-      var deleted = await _userService.DeleteUserAsync(id);
-
-      if (!deleted)
-      {
-        return NotFound();
-      }
-
-      return NoContent();
-    }
   }
+
+  [HttpGet("{id}")]
+  public async Task<IActionResult> GetById(int id)
+  {
+      try
+      {
+        var artist = await artistService.GetByIdArtistAsync(id);
+        if (artist == null)
+        {
+          return NotFound();
+        }
+        return Ok(artist);
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(500);
+      }
+    }
+
+  [Authorize(Roles = AuthRoles.Admin)]
+  [HttpPost]
+  public async Task<IActionResult> Create(AddArtistDto addArtistDto)
+  {
+    if (!ModelState.IsValid)
+    {
+      return BadRequest(ModelState);
+    }
+
+      try
+      {
+        await artistService.AddArtistAsync(addArtistDto);
+
+        return Ok();
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(500);
+      }
+  }
+
+  [Authorize(Roles = AuthRoles.Admin)]
+  [HttpPut("{id}")]
+  public async Task<IActionResult> Update(UpdateArtistDto updateArtistDto)
+  {
+      if (!ModelState.IsValid)
+      {
+        return BadRequest(ModelState);
+      }
+
+      try
+      {
+        await artistService.UpdateArtistAsync(updateArtistDto);
+        return Ok();
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(500);
+      }
+    }
+
+  [Authorize(Roles = AuthRoles.Admin)]
+  [HttpDelete("{id}")]
+  public async Task<IActionResult> Delete(int id)
+  {
+      try
+      {
+        await artistService.DeleteByIdArtistAsync(id);
+        return Ok();
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(500);
+      }
+    }
+}
 }

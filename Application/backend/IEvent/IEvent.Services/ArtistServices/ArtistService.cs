@@ -2,6 +2,7 @@
 using IEvent.Data.Infrastructure;
 using IEvent.Services.ArtistServices.Dto;
 using IEvent.Shared.Settings;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace IEvent.Services.ArtistServices
@@ -21,29 +22,73 @@ namespace IEvent.Services.ArtistServices
       this.unitOfWork = unitOfWork;
       this.envSettings = envSettings.Value;
     }
-    public Task AddArtistAsync(AddArtistDto addArtistDto)
+    public async Task AddArtistAsync(AddArtistDto addArtistDto)
     {
-      throw new NotImplementedException();
+      var newArtist = new Artist
+      {
+        Name = addArtistDto.Name,
+        Description = addArtistDto.Description,
+        IsDeleted = false,
+      };
+
+      await artistRepository.AddAsync(newArtist);
+      await unitOfWork.CommitAsync();
     }
 
-    public Task DeleteByIdArtistAsync(int id)
+    public async Task DeleteByIdArtistAsync(int id)
     {
-      throw new NotImplementedException();
+      var foundArtist = await artistRepository.Query()
+        .SingleOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+
+      if (foundArtist != null)
+      {
+        foundArtist.IsDeleted = true;
+        await unitOfWork.CommitAsync();
+      }
     }
 
-    public Task<List<GetAllArtistDto>> GetAllArtistAsync()
+    public async Task<List<GetAllArtistDto>> GetAllArtistAsync()
     {
-      throw new NotImplementedException();
+      return await artistRepository.Query()
+        .Where(x => !x.IsDeleted)
+        .Select(x => new GetAllArtistDto
+        {
+          Id = x.Id,
+          Name = x.Name,
+          Description = x.Description,
+        })
+        .ToListAsync();
     }
 
-    public Task<GetByIdArtistDto> GetByIdArtistAsync(int id)
+    public async Task<GetByIdArtistDto> GetByIdArtistAsync(int id)
     {
-      throw new NotImplementedException();
+      var foundArtist = await artistRepository.Query()
+        .SingleOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+
+      if (foundArtist != null)
+      {
+        return new GetByIdArtistDto
+        {
+          Id = foundArtist.Id,
+          Name = foundArtist.Name,
+          Description = foundArtist.Description
+        };
+      }
+
+      return null;
     }
 
-    public Task UpdateArtistAsync(UpdateArtistDto updateArtistDto)
+    public async Task UpdateArtistAsync(UpdateArtistDto updateArtistDto)
     {
-      throw new NotImplementedException();
+      var foundArtist = await artistRepository.Query()
+        .SingleOrDefaultAsync(x => x.Id == updateArtistDto.Id && !x.IsDeleted);
+
+      if (foundArtist != null)
+      {
+        foundArtist.Name = updateArtistDto.Name;
+        foundArtist.Description = updateArtistDto.Description;
+        await unitOfWork.CommitAsync();
+      }
     }
   }
 }

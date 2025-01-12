@@ -1,6 +1,6 @@
-﻿namespace IEvent.Services.ArtistServices.Dto
+﻿namespace IEvent.Services.GenreServices.Dto
 {
-  public class AddArtistDto
+  public class AddGenreDto
   {
     public string Name { get; set; }
 

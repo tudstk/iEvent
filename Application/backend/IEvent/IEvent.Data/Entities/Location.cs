@@ -8,6 +8,9 @@
 
     public string? Description { get; set; }
 
+    public bool IsDeleted { get; set; }
+
+
     public List<UserFavoriteLocation> UserFavoriteLocations { get; set; } = new List<UserFavoriteLocation>();
 
     public List<Event> LocationEvents { get; set; } = new List<Event>();
