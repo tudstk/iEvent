@@ -14,7 +14,7 @@ namespace IEvent.API.Controllers
 
     public EventTypeController(IEventTypeService eventTypeService)
     {
-      eventTypeService = eventTypeService;
+      this.eventTypeService = eventTypeService;
     }
 
     [HttpGet]

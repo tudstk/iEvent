@@ -14,7 +14,7 @@ namespace IEvent.API.Controllers
 
     public LocationsController(ILocationService locationService)
     {
-      locationService = locationService;
+      this.locationService = locationService;
     }
 
 

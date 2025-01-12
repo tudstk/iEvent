@@ -5,6 +5,8 @@ import AuthInput from '../../SHIT/auth/AuthInput';
 import EventComponent from '../../SHIT/event/EventComponent';
 import EventPage from '../../SHIT/event/EventPage';
 import Panel from '../../SHIT/user/Panel';
+import { extractJwtPayload } from '../../utils/jwtUtils';
+import { Link } from 'react-router-dom';
 
 
 const Home: React.FC = () => {
@@ -12,6 +14,9 @@ const Home: React.FC = () => {
     const [showPanel, setShowPanel] = useState(false);
     const [showLogin, setShowLogin] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
+
+    const token = localStorage.getItem('token');
+    const tokenInfo = extractJwtPayload(token || '');
 
     const handleLogin = () => {
         setUser(dummyUser);
@@ -43,6 +48,7 @@ const Home: React.FC = () => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+          {(tokenInfo?.isAdmin === "true" || tokenInfo?.isOrganizer === "true") && <button className="text-2xl font-bold text-center text-gray-800"><Link to="/admin-panel">Admin Panel</Link></button>}
             {!showPanel && !showLogin && selectedEvent === null && (
                 <div className="w-full max-w-2xl p-8 space-y-6 bg-white rounded-lg shadow-md">
                     <h1 className="text-2xl font-bold text-center text-gray-800">Home Page</h1>

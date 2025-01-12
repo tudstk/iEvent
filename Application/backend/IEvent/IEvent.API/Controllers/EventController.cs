@@ -14,7 +14,7 @@ namespace IEvent.API.Controllers
 
     public EventController(IEventService eventService)
     {
-      eventService = eventService;
+      this.eventService = eventService;
     }
 
 

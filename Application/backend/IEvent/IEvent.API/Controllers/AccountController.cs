@@ -62,6 +62,8 @@ namespace IEvent.API.Controllers
 
       var result = await _userManager.CreateAsync(user, model.Password);
 
+      var userRoles = await _userManager.GetRolesAsync(user);
+
       if (result.Succeeded)
       {
         await _userManager.AddToRoleAsync(user, AuthRoles.User);
@@ -76,6 +78,9 @@ namespace IEvent.API.Controllers
           new Claim("isOrganizer", "false"),
           new Claim("isUser", "true")
         };
+
+        authClaims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
+
 
         var token = new JwtSecurityToken(
             issuer: _configuration["Issuer"],
@@ -117,6 +122,8 @@ namespace IEvent.API.Controllers
           new Claim("isOrganizer", isOrganizer),
           new Claim("isUser", isUser)
         };
+
+        authClaims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var token = new JwtSecurityToken(
             issuer: _configuration["Issuer"],

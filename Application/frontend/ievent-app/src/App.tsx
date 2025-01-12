@@ -7,6 +7,7 @@ import ProtectedRoute from "./pages/ProtectedRoute/ProtectedRoute";
 import Splash from "./pages/Splash";
 import { verifyToken } from "./api/account";
 import { TokenRequest } from "./types/requests/account/tokenRequest";
+import AdminPanel from "./pages/AdminPanel/AdminPanel";
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -64,7 +65,15 @@ const App: React.FC = () => {
             <Home />
           </ProtectedRoute>
         }
-      />{" "}
+      />
+      <Route
+        path="/admin-panel"
+        element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <AdminPanel />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 };

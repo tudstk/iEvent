@@ -89,10 +89,10 @@ namespace IEvent.Services.EventServices
           Name = foundEvent.Name,
           Description = foundEvent.Description,
           Date = foundEvent.Date,
-          LocationName = foundEvent.Location.Name,
-          EventTypeName = foundEvent.EventType.Name,
-          GenreName = foundEvent.Genre.Name,
-          MainArtistName = foundEvent.MainArtist.Name,
+          LocationName = foundEvent?.Location?.Name,
+          EventTypeName = foundEvent?.EventType?.Name,
+          GenreName = foundEvent?.Genre?.Name,
+          MainArtistName = foundEvent?.MainArtist?.Name,
           Theme = foundEvent.Theme,
         };
       }

@@ -14,7 +14,7 @@ namespace IEvent.API.Controllers
 
     public GenreController(IGenreService genreService)
     {
-      genreService = genreService;
+      this.genreService = genreService;
     }
 
     [HttpGet]

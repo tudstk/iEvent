@@ -14,7 +14,7 @@ namespace IEvent.API.Controllers
 
     public ArtistsController(IArtistService artistService)
     {
-      artistService = artistService;
+      this.artistService = artistService;
     }
 
     
