@@ -17,7 +17,6 @@ namespace IEvent.API.Controllers
       eventTypeService = eventTypeService;
     }
 
-
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
