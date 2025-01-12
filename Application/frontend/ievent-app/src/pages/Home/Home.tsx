@@ -56,7 +56,7 @@ const Home: React.FC = () => {
                         <div className="text-center">
                             <p className="text-gray-700">Welcome, {user.name}!</p>
                             <button onClick={handleLogout} className="ml-4 text-red-600 hover:underline">Logout</button>
-                            <button onClick={handleShowPanel} className="ml-4 text-indigo-600 hover:underline">Go to User Panel</button>
+                            <button onClick={handleShowPanel} className="ml-4 text-indigo-600 hover:underline"><Link to="/profile">Profile</Link></button>
                         </div>
                     ) : (
                         <div className="text-center">

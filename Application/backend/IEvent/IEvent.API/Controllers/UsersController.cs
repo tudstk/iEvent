@@ -36,7 +36,7 @@ namespace IEvent.API.Controllers
     }
 
     [Authorize]
-    [HttpGet("/profile")]
+    [HttpGet("/api/users/profile")]
     public async Task<IActionResult> GetProfileAsync()
     {
       try
@@ -117,7 +117,7 @@ namespace IEvent.API.Controllers
     }
 
     [Authorize]
-    [HttpPut("/profile")]
+    [HttpPut("/api/users/profile")]
     public async Task<IActionResult> UpdateProfileAsync([FromBody] ModifyProfileDto modifyProfileDto)
     {
 

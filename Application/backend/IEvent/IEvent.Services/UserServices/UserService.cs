@@ -187,6 +187,8 @@ namespace IEvent.Services.UserServices
       if (user != null)
       {
         user.UserName = modifyProfileDto.UserName;
+        user.NormalizedUserName = modifyProfileDto.UserName;
+        user.NormalizedEmail = modifyProfileDto.UserEmail;
         user.Email = modifyProfileDto.UserEmail;
       }
 
