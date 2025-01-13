@@ -4,12 +4,15 @@ import "./Home.css";
 import { getMyEvents, getRecommendedEvents, addEventToMyList, removeEventFromMyList } from "../../api/homereq";
 import { getProfile } from "../../api/profileReq";
 import { UserEventDto } from "../../types/dtos/home";
+import { extractJwtPayload } from "../../utils/jwtUtils";
 
 const Home: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [myEvents, setMyEvents] = useState<UserEventDto[]>([]);
   const [recommendedEvents, setRecommendedEvents] = useState<UserEventDto[]>([]);
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+  const tokenInfo = extractJwtPayload(token || '');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,7 +37,7 @@ const Home: React.FC = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/home");
+    navigate("/");
   };
 
   const handleAddEvent = async (event: UserEventDto) => {
@@ -68,9 +71,9 @@ const Home: React.FC = () => {
           <button className="btn btn-profile" onClick={() => navigate("/profile")}>
             Profile
           </button>
-          <button className="btn btn-admin-panel" onClick={() => navigate("/admin-panel")}>
+          {(tokenInfo?.isAdmin === "true" || tokenInfo?.isOrganizer === "true")&&<button className="btn btn-admin-panel" onClick={() => navigate("/admin-panel")}>
             Admin Panel
-          </button>
+          </button>}
         </div>
       </header>
 
