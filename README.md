@@ -15,3 +15,4 @@
 * Trello: https://trello.com/b/JJ2WKqoC/ievent-task-planner
 * State of the Art: https://docs.google.com/document/d/1jYL8SBLOgaHvkNfA7YUzy0L_LWOGdSqvhe0mIHBS3ss/edit?tab=t.0
 * Requirement Analysis: https://docs.google.com/document/d/1KKXWfVrBMWACuSR0LwyGhBVNaLmZR8S8_LSgB8HRC4g/edit?tab=t.0#heading=h.wybtgoutm8c9
+* Technical Report: https://docs.google.com/document/d/1OytQJJwj071p7lpddMjZfW34MQc1yRk4qKk22bdMbas/edit?tab=t.0
