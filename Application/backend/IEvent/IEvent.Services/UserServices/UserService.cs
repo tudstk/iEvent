@@ -171,13 +171,15 @@ namespace IEvent.Services.UserServices
 
     public async Task RemoveEventForUser(int personId, int eventId)
     {
-      var itemToDelete = await userEventRepository.Query()
-        .SingleOrDefaultAsync(x => x.UserId == personId && x.EventId == eventId && !x.Event.IsDeleted);
+      var itemsToDelete = await userEventRepository.Query()
+        .Where(x => x.UserId == personId && x.EventId == eventId && !x.Event.IsDeleted)
+        .ToListAsync();
 
-      if (itemToDelete != null)
-      {
-        userEventRepository.Delete(itemToDelete);
+      foreach (var item in itemsToDelete) {
+        userEventRepository.Delete(item);
       }
+
+      await unitOfWork.CommitAsync();
     }
 
     public async Task UpdateProfileAsync(int personId, ModifyProfileDto modifyProfileDto)

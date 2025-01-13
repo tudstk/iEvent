@@ -17,7 +17,7 @@ namespace IEvent.API.Controllers
     }
 
     [Authorize]
-    [HttpPost("/event")]
+    [HttpPost("/api/event")]
     public async Task<IActionResult> AddEventForUser([FromBody] int eventId)
     {
       try
@@ -60,7 +60,7 @@ namespace IEvent.API.Controllers
     }
 
     [Authorize]
-    [HttpGet("/recommendations")]
+    [HttpGet("/api/recommendations")]
     public async Task<IActionResult> GetRecommendedUserEvents()
     {
       try
@@ -79,7 +79,7 @@ namespace IEvent.API.Controllers
     }
 
     [Authorize]
-    [HttpGet("/all-user-events")]
+    [HttpGet("/api/all-user-events")]
     public async Task<IActionResult> GetUserEvents()
     {
       try
@@ -98,7 +98,7 @@ namespace IEvent.API.Controllers
     }
 
     [Authorize]
-    [HttpDelete("/event")]
+    [HttpDelete("/api/event")]
     public async Task<IActionResult> RemoveEventForUser([FromBody] int eventId)
     {
       try

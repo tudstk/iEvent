@@ -1,0 +1,150 @@
+/* General Styles */
+body {
+  margin: 0;
+  font-family: "Arial", sans-serif;
+  background-color: #f3f4f6;
+  color: #333;
+}
+
+.home-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Header */
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 15px;
+  background-color: #1e293b;
+  color: white;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.home-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.home-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-logout {
+  background-color: #ef4444;
+  color: white;
+}
+
+.btn-logout:hover {
+  background-color: #dc2626;
+}
+
+.btn-profile {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.btn-profile:hover {
+  background-color: #2563eb;
+}
+
+.btn-admin-panel {
+  background-color: #10b981;
+  color: white;
+}
+
+.btn-admin-panel:hover {
+  background-color: #059669;
+}
+
+/* Event Lists */
+.home-lists {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.event-list {
+  flex: 1;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.list-title {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #1f2937;
+}
+
+.event-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.event-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.event-item:last-child {
+  border-bottom: none;
+}
+
+.event-details {
+  flex: 1;
+}
+
+.event-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #1e293b;
+}
+
+.event-description {
+  margin: 5px 0 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Buttons */
+.btn-remove {
+  background-color: #ef4444;
+  color: white;
+}
+
+.btn-remove:hover {
+  background-color: #dc2626;
+}
+
+.btn-heart {
+  background-color: #f9fafb;
+  color: #ef4444;
+  font-size: 18px;
+  line-height: 18px;
+}
+
+.btn-heart:hover {
+  background-color: #fde8e8;
+}

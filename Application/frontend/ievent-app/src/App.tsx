@@ -9,6 +9,7 @@ import { verifyToken } from "./api/account";
 import { TokenRequest } from "./types/requests/account/tokenRequest";
 import AdminPanel from "./pages/AdminPanel/AdminPanel";
 import Profile from "./pages/Profile/Profile";
+import Eventt from "./pages/Event/Event";
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -80,6 +81,14 @@ const App: React.FC = () => {
         element={
           <ProtectedRoute isAuthenticated={isAuthenticated}>
             <Profile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/event/:id"
+        element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <Eventt />
           </ProtectedRoute>
         }
       />

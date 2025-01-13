@@ -1,86 +1,128 @@
-import React, { useState } from 'react';
-import { dummyEvents, dummyUser } from '../../SHIT/models/dummy';
-import { User } from '../../SHIT/models/User';
-import AuthInput from '../../SHIT/auth/AuthInput';
-import EventComponent from '../../SHIT/event/EventComponent';
-import EventPage from '../../SHIT/event/EventPage';
-import Panel from '../../SHIT/user/Panel';
-import { extractJwtPayload } from '../../utils/jwtUtils';
-import { Link } from 'react-router-dom';
-
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./Home.css";
+import { getMyEvents, getRecommendedEvents, addEventToMyList, removeEventFromMyList } from "../../api/homereq";
+import { getProfile } from "../../api/profileReq";
+import { UserEventDto } from "../../types/dtos/home";
 
 const Home: React.FC = () => {
-    const [user, setUser] = useState<User | null>(dummyUser);
-    const [showPanel, setShowPanel] = useState(false);
-    const [showLogin, setShowLogin] = useState(false);
-    const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
+  const [username, setUsername] = useState<string>("");
+  const [myEvents, setMyEvents] = useState<UserEventDto[]>([]);
+  const [recommendedEvents, setRecommendedEvents] = useState<UserEventDto[]>([]);
+  const navigate = useNavigate();
 
-    const token = localStorage.getItem('token');
-    const tokenInfo = extractJwtPayload(token || '');
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const profile = await getProfile();
+        setUsername(profile.userName);
 
-    const handleLogin = () => {
-        setUser(dummyUser);
-        setShowLogin(false);
+        const [events, recommendations] = await Promise.all([
+          getMyEvents(),
+          getRecommendedEvents(),
+        ]);
+
+        setMyEvents(events);
+        setRecommendedEvents(recommendations);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
 
-    const handleLogout = () => {
-        setUser(null);
-        setShowPanel(false);
-        setSelectedEvent(null);
-    };
+    fetchData();
+  }, []);
 
-    const handleShowPanel = () => {
-        setShowPanel(true);
-        setSelectedEvent(null);
-    };
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/home");
+  };
 
-    const handleShowLogin = () => {
-        setShowLogin(true);
-        setShowPanel(false);
-        setSelectedEvent(null);
-    };
+  const handleAddEvent = async (event: UserEventDto) => {
+    try {
+      await addEventToMyList(event.id);
+      setMyEvents((prev) => [...prev, event]);
+      setRecommendedEvents((prev) => prev.filter((e) => e.id !== event.id));
+    } catch (error) {
+      console.error("Error adding event:", error);
+    }
+  };
 
-    const handleShowEvent = (eventId: number) => {
-        setSelectedEvent(eventId);
-        setShowPanel(false);
-        setShowLogin(false);
-    };
+  const handleRemoveEvent = async (event: UserEventDto) => {
+    try {
+      await removeEventFromMyList(event.id);
+      setRecommendedEvents((prev) => [...prev, event]);
+      setMyEvents((prev) => prev.filter((e) => e.id !== event.id));
+    } catch (error) {
+      console.error("Error removing event:", error);
+    }
+  };
 
-    return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-          {(tokenInfo?.isAdmin === "true" || tokenInfo?.isOrganizer === "true") && <button className="text-2xl font-bold text-center text-gray-800"><Link to="/admin-panel">Admin Panel</Link></button>}
-            {!showPanel && !showLogin && selectedEvent === null && (
-                <div className="w-full max-w-2xl p-8 space-y-6 bg-white rounded-lg shadow-md">
-                    <h1 className="text-2xl font-bold text-center text-gray-800">Home Page</h1>
-                    {user ? (
-                        <div className="text-center">
-                            <p className="text-gray-700">Welcome, {user.name}!</p>
-                            <button onClick={handleLogout} className="ml-4 text-red-600 hover:underline">Logout</button>
-                            <button onClick={handleShowPanel} className="ml-4 text-indigo-600 hover:underline"><Link to="/profile">Profile</Link></button>
-                        </div>
-                    ) : (
-                        <div className="text-center">
-                            <p className="text-gray-700">You are not logged in.</p>
-                            <button onClick={handleShowLogin} className="ml-4 text-indigo-600 hover:underline">Login as Dummy User</button>
-                        </div>
-                    )}
-                    <h2 className="text-xl font-bold text-gray-800">Event Feed</h2>
-                    <div className="space-y-4">
-                        {dummyEvents.map(event => (
-                            <div key={event.id} onClick={() => handleShowEvent(event.id)}>
-                                <EventComponent event={event} />
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
-            {showPanel && user && <Panel user={user} />}
-            {showLogin && <AuthInput />}
-            {selectedEvent !== null && (
-                <EventPage event={dummyEvents.find(e => e.id === selectedEvent)!} user={user} />
-            )}
+  return (
+    <div className="home-page">
+      <header className="home-header">
+        <h1 className="home-title">Welcome, {username}</h1>
+        <div className="home-buttons">
+          <button className="btn btn-logout" onClick={handleLogout}>
+            Logout
+          </button>
+          <button className="btn btn-profile" onClick={() => navigate("/profile")}>
+            Profile
+          </button>
+          <button className="btn btn-admin-panel" onClick={() => navigate("/admin-panel")}>
+            Admin Panel
+          </button>
         </div>
-    );
+      </header>
+
+      <div className="home-lists">
+        <div className="event-list my-events">
+          <h2 className="list-title">My Events</h2>
+          <ul className="event-items">
+            {myEvents.map((event) => (
+              <li key={event.id} className="event-item" onClick={() => navigate(`/event/${event.id}`)}>
+                <div className="event-details">
+                  <h3 className="event-name">{event.name}</h3>
+                  <p className="event-description">{event.description}</p>
+                </div>
+                <button
+                  className="btn btn-remove"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemoveEvent(event);
+                  }}
+                >
+                  X
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="event-list recommended-events">
+          <h2 className="list-title">Recommended Events</h2>
+          <ul className="event-items">
+            {recommendedEvents.map((event) => (
+              <li key={event.id} className="event-item" onClick={() => navigate(`/event/${event.id}`)}>
+                <div className="event-details">
+                  <h3 className="event-name">{event.name}</h3>
+                  <p className="event-description">{event.description}</p>
+                </div>
+                <button
+                  className="btn btn-heart"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddEvent(event);
+                  }}
+                >
+                  ❤️
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Home;
